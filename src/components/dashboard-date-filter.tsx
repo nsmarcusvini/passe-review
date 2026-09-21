@@ -25,7 +25,7 @@ export default function DashboardDateFilter({
         {PRESETS.map((p) => (
           <Link
             key={p.key}
-            href={`/app/dashboards?range=${p.key}`}
+            href={`/app?range=${p.key}`}
             className={`rounded-sm px-3 py-1.5 font-mono-label text-[11px] uppercase tracking-wide transition-colors ${
               !isCustom && activeRange === p.key
                 ? "bg-primary text-white"
@@ -38,7 +38,7 @@ export default function DashboardDateFilter({
       </div>
       <form
         method="get"
-        action="/app/dashboards"
+        action="/app"
         className="flex flex-wrap items-center gap-2 sm:ml-auto"
       >
         <input

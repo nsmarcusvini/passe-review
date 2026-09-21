@@ -44,7 +44,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         </div>
         <nav className="mx-auto flex max-w-5xl gap-5 border-t border-white/10 px-4 sm:px-6">
           <NavLink href="/app">Dashboard</NavLink>
-          <NavLink href="/app/dashboards">Dashboards</NavLink>
           <NavLink href="/app/revisoes">Revisões</NavLink>
           <NavLink href="/app/registrar">Registrar</NavLink>
           <NavLink href="/app/materias">Matérias</NavLink>

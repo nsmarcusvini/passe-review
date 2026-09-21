@@ -60,22 +60,6 @@ export async function getDashboardStats(supabase: SupabaseClient, userId: string
   const totalCorrect = rows.reduce((sum, r) => sum + r.correct, 0);
   const accuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
 
-  const bySubject = new Map<string, { correct: number; total: number }>();
-  for (const r of rows) {
-    const topic = r.topics as unknown as { name: string; subjects: { name: string } | null } | null;
-    const subjectName = topic?.subjects?.name ?? "Sem matéria";
-    const entry = bySubject.get(subjectName) ?? { correct: 0, total: 0 };
-    entry.correct += r.correct;
-    entry.total += r.total_questions;
-    bySubject.set(subjectName, entry);
-  }
-
-  const performanceBySubject = Array.from(bySubject.entries()).map(([name, v]) => ({
-    name,
-    accuracy: v.total > 0 ? Math.round((v.correct / v.total) * 100) : 0,
-    total: v.total,
-  }));
-
   const studyDays = new Set(rows.map((r) => r.session_date));
   let streak = 0;
   const cursor = new Date();
@@ -107,7 +91,6 @@ export async function getDashboardStats(supabase: SupabaseClient, userId: string
     streak,
     atrasadasCount: queue.atrasadas.length,
     hojeCount: queue.hoje.length,
-    performanceBySubject,
     needsRevisit,
   };
 }
@@ -191,6 +174,15 @@ export async function getDashboardAnalytics(supabase: SupabaseClient, userId: st
     .map(([name, v]) => ({ name, total: v.total }))
     .sort((a, b) => b.total - a.total);
 
+  const subjectPerformance = Array.from(bySubject.entries())
+    .map(([name, v]) => ({
+      name,
+      correct: v.correct,
+      total: v.total,
+      accuracy: v.total > 0 ? Math.round((v.correct / v.total) * 100) : 0,
+    }))
+    .sort((a, b) => a.accuracy - b.accuracy || b.total - a.total);
+
   const topicPerformance = Array.from(byTopic.values())
     .map((t) => ({ ...t, accuracy: t.total > 0 ? Math.round((t.correct / t.total) * 100) : 0 }))
     .sort((a, b) => a.accuracy - b.accuracy || b.total - a.total);
@@ -205,6 +197,7 @@ export async function getDashboardAnalytics(supabase: SupabaseClient, userId: st
     bucketMode,
     overTime,
     subjectDistribution,
+    subjectPerformance,
     topicPerformance,
     weakTopics,
   };
