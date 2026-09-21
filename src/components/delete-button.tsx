@@ -18,7 +18,7 @@ export default function DeleteButton({ action }: { action: () => Promise<void> }
           router.refresh();
         });
       }}
-      className="text-xs font-medium text-muted transition-colors hover:text-red-600 disabled:opacity-50"
+      className="font-mono-label text-[11px] uppercase tracking-wide text-muted transition-colors hover:text-danger disabled:opacity-50"
     >
       Excluir
     </button>

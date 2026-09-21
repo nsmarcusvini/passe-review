@@ -17,21 +17,33 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
+          daily_question_goal: number | null
           display_name: string | null
+          exam_board: string | null
+          exam_date: string | null
           exam_target: string | null
           id: string
+          target_role: string | null
         }
         Insert: {
           created_at?: string
+          daily_question_goal?: number | null
           display_name?: string | null
+          exam_board?: string | null
+          exam_date?: string | null
           exam_target?: string | null
           id: string
+          target_role?: string | null
         }
         Update: {
           created_at?: string
+          daily_question_goal?: number | null
           display_name?: string | null
+          exam_board?: string | null
+          exam_date?: string | null
           exam_target?: string | null
           id?: string
+          target_role?: string | null
         }
         Relationships: []
       }

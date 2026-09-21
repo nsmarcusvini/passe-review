@@ -11,7 +11,14 @@ export default async function RevisoesPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-lg font-semibold text-foreground">Fila de revisões</h1>
+      <div>
+        <p className="font-mono-label text-[11px] uppercase tracking-[0.16em] text-accent-dark">
+          Ordem de urgência
+        </p>
+        <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight text-foreground">
+          Fila de revisões
+        </h1>
+      </div>
 
       <ReviewQueueSection
         title="Atrasadas"

@@ -21,6 +21,18 @@ export async function createSubject(name: string) {
   revalidatePath("/app/materias");
 }
 
+export async function updateSubject(id: string, name: string) {
+  const { supabase, user } = await requireUser();
+  const { error } = await supabase
+    .from("subjects")
+    .update({ name })
+    .eq("id", id)
+    .eq("user_id", user.id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/app/materias");
+  revalidatePath(`/app/materias/${id}`);
+}
+
 export async function deleteSubject(id: string) {
   const { supabase, user } = await requireUser();
   const { error } = await supabase

@@ -1,9 +1,8 @@
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getSubjectsWithTopicCount } from "@/lib/data";
 import { deleteSubject } from "@/lib/actions/subjects";
 import CreateSubjectForm from "@/components/create-subject-form";
-import DeleteButton from "@/components/delete-button";
+import SubjectCard from "@/components/subject-card";
 
 export default async function MateriasPage() {
   const supabase = await createClient();
@@ -11,34 +10,45 @@ export default async function MateriasPage() {
     data: { user },
   } = await supabase.auth.getUser();
   const subjects = await getSubjectsWithTopicCount(supabase, user!.id);
+  const totalTopics = subjects.reduce((sum, s) => sum + s.topicCount, 0);
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-lg font-semibold text-foreground">Matérias</h1>
+    <div className="space-y-8">
+      <div>
+        <p className="font-mono-label text-[11px] uppercase tracking-[0.16em] text-accent-dark">
+          Arquivo de estudos
+        </p>
+        <div className="mt-1 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+          <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground">Matérias</h1>
+          {subjects.length > 0 && (
+            <p className="font-mono-label text-[11px] tracking-wide text-muted">
+              {subjects.length} dossiê{subjects.length === 1 ? "" : "s"} · {totalTopics} tópico
+              {totalTopics === 1 ? "" : "s"}
+            </p>
+          )}
+        </div>
+      </div>
 
-      <div className="rounded-xl border border-border bg-white p-4 shadow-sm">
+      <div className="rounded-sm border border-dashed border-primary/25 bg-white p-4">
+        <p className="mb-2 font-mono-label text-[11px] uppercase tracking-[0.14em] text-muted">
+          Abrir novo dossiê
+        </p>
         <CreateSubjectForm />
       </div>
 
       {subjects.length === 0 ? (
-        <p className="text-sm text-muted">Nenhuma matéria cadastrada ainda.</p>
-      ) : (
-        <div className="grid gap-3 sm:grid-cols-2">
-          {subjects.map((s) => (
-            <div
-              key={s.id}
-              className="flex items-center justify-between rounded-xl border border-border bg-white p-4 shadow-sm"
-            >
-              <Link href={`/app/materias/${s.id}`} className="flex-1">
-                <p className="font-medium text-foreground hover:text-primary">{s.name}</p>
-                <p className="text-xs text-muted">
-                  {s.topicCount} tópico{s.topicCount === 1 ? "" : "s"}
-                </p>
-              </Link>
-              <DeleteButton action={deleteSubject.bind(null, s.id)} />
-            </div>
-          ))}
+        <div className="rounded-xl border border-dashed border-border bg-white/60 p-10 text-center">
+          <p className="text-sm font-medium text-foreground">Sua estante de dossiês está vazia.</p>
+          <p className="mt-1 text-sm text-muted">
+            Abra o primeiro dossiê acima para começar a organizar seus estudos.
+          </p>
         </div>
+      ) : (
+        <ul className="grid list-none gap-5 pt-1 sm:grid-cols-2">
+          {subjects.map((s, i) => (
+            <SubjectCard key={s.id} subject={s} index={i} deleteAction={deleteSubject.bind(null, s.id)} />
+          ))}
+        </ul>
       )}
     </div>
   );

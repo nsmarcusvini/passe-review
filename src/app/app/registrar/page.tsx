@@ -16,15 +16,32 @@ export default async function RegistrarPage({
 
   return (
     <div className="space-y-6">
-      <h1 className="text-lg font-semibold text-foreground">Registrar questões</h1>
+      <div>
+        <p className="font-mono-label text-[11px] uppercase tracking-[0.16em] text-accent-dark">
+          Menos de 20 segundos
+        </p>
+        <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight text-foreground">
+          Registrar questões
+        </h1>
+      </div>
 
       {topics.length === 0 ? (
-        <p className="rounded-xl border border-border bg-white p-4 text-sm text-muted shadow-sm">
+        <div className="rounded-sm border border-dashed border-border p-6 text-center text-sm text-muted">
           Cadastre uma matéria e um tópico antes de registrar sua primeira sessão de questões.
-        </p>
+        </div>
       ) : (
-        <div className="rounded-xl border border-border bg-white p-4 shadow-sm sm:p-6">
-          <RegisterSessionForm topics={topics} defaultTopicId={topicId} />
+        <div className="overflow-hidden rounded-sm border border-border bg-white">
+          <div className="flex items-center justify-between border-b border-border bg-surface px-4 py-2.5 sm:px-6">
+            <span className="font-mono-label text-[10px] uppercase tracking-[0.14em] text-muted">
+              Ficha de registro
+            </span>
+            <span className="font-mono-label text-[10px] text-muted">
+              {new Date().toLocaleDateString("pt-BR")}
+            </span>
+          </div>
+          <div className="p-4 sm:p-6">
+            <RegisterSessionForm topics={topics} defaultTopicId={topicId} />
+          </div>
         </div>
       )}
     </div>

@@ -28,12 +28,12 @@ export default function CreateTopicForm({ subjectId }: { subjectId: string }) {
         name="name"
         placeholder="Novo tópico (ex: Controle de Constitucionalidade)"
         required
-        className="flex-1 rounded-md border border-border px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+        className="flex-1 rounded-sm border border-border px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary/30"
       />
       <button
         type="submit"
         disabled={pending}
-        className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:opacity-50"
+        className="rounded-sm bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:opacity-50"
       >
         {pending ? "Adicionando…" : "Adicionar"}
       </button>

@@ -1,31 +1,13 @@
 import Link from "next/link";
-import { Space_Grotesk, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import { display, body, mono } from "@/lib/landing-fonts";
 import Reveal from "@/components/landing/reveal";
-import ReviewRail from "@/components/landing/review-rail";
-
-const display = Space_Grotesk({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-display",
-});
-
-const body = IBM_Plex_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-body",
-});
-
-const mono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-mono-label",
-});
+import AnswerSheet from "@/components/landing/answer-sheet";
+import ReviewLedger from "@/components/landing/review-ledger";
+import ApprovedStamp from "@/components/landing/approved-stamp";
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <span
-      className={`${mono.className} text-xs font-medium uppercase tracking-[0.18em] text-accent-dark`}
-    >
+    <span className={`${mono.className} text-xs font-bold uppercase tracking-[0.16em] text-primary`}>
       {children}
     </span>
   );
@@ -33,47 +15,53 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
 
 const FEATURES = [
   {
-    n: "01",
     title: "Fila de revisões",
-    body: "Atrasadas, hoje e as próximas — tudo ordenado por urgência, sem você precisar lembrar de nada.",
-    big: true,
+    body: "Atrasadas, hoje e as próximas — sempre à vista, sem você precisar lembrar de nada.",
+    rotate: "-rotate-1",
   },
   {
-    n: "02",
     title: "Registro em segundos",
     body: "Total de questões, acertos, erros e uma observação. Menos de 20 segundos por sessão.",
+    rotate: "rotate-1",
   },
   {
-    n: "03",
     title: "Dashboard por matéria",
-    body: "% de acerto por matéria e sua sequência de dias estudando, sempre à vista.",
+    body: "Seu % de acerto por matéria e sua sequência de dias estudando, sempre visíveis.",
+    rotate: "rotate-[-0.5deg]",
   },
   {
-    n: "04",
     title: "Voltar depois",
     body: "Marque questões difíceis fora do ciclo automático, sem perder o registro de nada.",
+    rotate: "rotate-[1.5deg]",
   },
+];
+
+const PWA_STEPS = [
+  { n: "01", label: "Abra no navegador", detail: "passe-revisao.app, no celular" },
+  { n: "02", label: "Adicionar à tela inicial", detail: "menu do navegador → instalar" },
+  { n: "03", label: "Estude como app", detail: "ícone próprio, sem abas, sem distração" },
 ];
 
 export default function LandingPage() {
   return (
     <div className={`${body.className} flex flex-1 flex-col bg-white`}>
-      <header className="sticky top-0 z-20 border-b border-white/10 bg-primary-dark/95 backdrop-blur">
+      {/* LETTERHEAD */}
+      <header className="border-b border-border bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-          <span className={`${display.className} flex items-center gap-2 text-sm font-semibold text-white`}>
-            <span className="inline-block h-2.5 w-2.5 rounded-full bg-accent" />
+          <span className={`${display.className} flex items-center gap-2 text-lg font-bold text-primary`}>
+            <span className="inline-block h-2 w-2 rounded-full bg-accent-dark" />
             Passe Revisão
           </span>
-          <nav className="flex items-center gap-3">
+          <nav className="flex items-center gap-5">
             <Link
               href="/login"
-              className="hidden text-sm font-medium text-white/75 transition-colors hover:text-white sm:inline"
+              className="hidden text-sm font-medium text-muted transition-colors hover:text-foreground sm:inline"
             >
               Entrar
             </Link>
             <Link
               href="/cadastro"
-              className="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-primary-dark transition-colors hover:bg-accent-light"
+              className="rounded-sm bg-accent px-4 py-2 text-sm font-semibold text-primary-dark transition-colors hover:bg-accent-dark"
             >
               Criar conta grátis
             </Link>
@@ -82,135 +70,135 @@ export default function LandingPage() {
       </header>
 
       {/* HERO */}
-      <section className="relative overflow-hidden bg-primary-dark">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-40"
-          style={{
-            background:
-              "radial-gradient(60% 50% at 15% 0%, rgba(0,59,112,0.9), transparent), radial-gradient(45% 40% at 100% 100%, rgba(245,196,0,0.14), transparent)",
-          }}
-        />
-        <div className="relative mx-auto max-w-6xl px-5 pb-20 pt-16 sm:pt-24">
-          <Reveal>
-            <Eyebrow>Método de recuperação ativa</Eyebrow>
-          </Reveal>
-          <Reveal delay={80}>
-            <h1
-              className={`${display.className} mt-5 max-w-3xl text-5xl font-semibold leading-[0.98] tracking-[-0.03em] text-white sm:text-6xl lg:text-7xl`}
-            >
-              Estudar não é o problema.
-              <br />
-              <span className="text-accent">Esquecer é.</span>
-            </h1>
-          </Reveal>
-          <Reveal delay={160}>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/70">
-              O Passe Revisão organiza suas revisões pelo método de resolução de questões: você
-              estuda, resolve, e o sistema agenda sozinho a próxima rodada — no dia exato em que
-              seu cérebro está prestes a esquecer.
-            </p>
-          </Reveal>
-          <Reveal delay={240}>
-            <div className="mt-9 flex flex-wrap items-center gap-4">
-              <Link
-                href="/cadastro"
-                className="rounded-md bg-accent px-6 py-3 text-sm font-semibold text-primary-dark transition-colors hover:bg-accent-light"
+      <section className="border-b border-border bg-white">
+        <div className="mx-auto grid max-w-6xl gap-12 px-5 py-16 sm:py-20 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-16 lg:py-28">
+          <div>
+            <Reveal>
+              <Eyebrow>Revisão por questões</Eyebrow>
+            </Reveal>
+            <Reveal delay={70}>
+              <h1
+                className={`${display.className} mt-5 max-w-xl text-[2.6rem] font-bold leading-[1.05] tracking-[-0.01em] text-foreground sm:text-5xl lg:text-6xl`}
               >
-                Criar conta grátis
-              </Link>
-              <Link
-                href="/login"
-                className="text-sm font-medium text-white/70 transition-colors hover:text-white"
-              >
-                Já tenho conta →
-              </Link>
-            </div>
-          </Reveal>
+                Você estuda. Esquece. Estuda de novo.
+              </h1>
+            </Reveal>
+            <Reveal delay={140}>
+              <p className="mt-6 max-w-md text-base leading-relaxed text-muted sm:text-lg">
+                O Passe Revisão transforma cada questão que você resolve em uma revisão
+                agendada — no dia exato em que sua memória começa a falhar. 24 horas, 7 dias,
+                30, 45, 60. Sem planilha, sem &ldquo;depois eu organizo&rdquo;.
+              </p>
+            </Reveal>
+            <Reveal delay={210}>
+              <div className="mt-8 flex flex-wrap items-center gap-5">
+                <Link
+                  href="/cadastro"
+                  className="rounded-sm bg-accent px-6 py-3 text-sm font-semibold text-primary-dark transition-colors hover:bg-accent-dark"
+                >
+                  Criar conta grátis
+                </Link>
+                <Link
+                  href="/login"
+                  className="text-sm font-medium text-muted transition-colors hover:text-foreground"
+                >
+                  Já tenho conta →
+                </Link>
+              </div>
+            </Reveal>
+          </div>
 
-          <Reveal delay={320} className="mt-20">
-            <p className={`${mono.className} mb-3 text-xs tracking-wide text-white/40`}>
-              sua próxima revisão, agendada automaticamente
-            </p>
-            <ReviewRail />
+          <Reveal delay={180} className="flex justify-center lg:justify-end">
+            <AnswerSheet />
           </Reveal>
         </div>
       </section>
 
       {/* PROBLEMA */}
-      <section className="mx-auto max-w-6xl px-5 py-24 sm:py-32">
-        <div className="grid gap-10 sm:grid-cols-12">
-          <div className="sm:col-span-4">
-            <Reveal>
-              <Eyebrow>O problema</Eyebrow>
-            </Reveal>
+      <section className="border-b border-border bg-white">
+        <div className="mx-auto max-w-6xl px-5 py-20 sm:py-28">
+          <div className="grid gap-8 lg:grid-cols-12 lg:gap-10">
+            <div className="lg:col-span-4">
+              <Reveal>
+                <Eyebrow>O problema</Eyebrow>
+              </Reveal>
+            </div>
+            <div className="lg:col-span-8">
+              <Reveal delay={60}>
+                <p
+                  className={`${display.className} max-w-2xl text-[1.75rem] font-semibold italic leading-[1.25] text-foreground sm:text-3xl`}
+                >
+                  &ldquo;Reler a matéria dá a sensação de que você sabe. Só o cartão-resposta
+                  não mente.&rdquo;
+                </p>
+              </Reveal>
+              <Reveal delay={140}>
+                <p className="mt-7 max-w-xl text-base leading-relaxed text-muted">
+                  Sem revisão organizada, o conteúdo que custou horas de estudo evapora em
+                  poucas semanas — e o concurseiro só descobre isso durante a prova, quando já
+                  é tarde. O Passe Revisão troca a releitura passiva pela resolução ativa de
+                  questões: o único jeito confiável de saber se você aprendeu de verdade.
+                </p>
+              </Reveal>
+            </div>
           </div>
-          <div className="sm:col-span-8">
-            <Reveal delay={60}>
-              <h2
-                className={`${display.className} max-w-2xl text-3xl font-semibold leading-tight tracking-[-0.02em] text-foreground sm:text-4xl`}
-              >
-                Reler a matéria dá a sensação de que você sabe. Resolver questões prova se você
-                sabe de verdade.
-              </h2>
-            </Reveal>
-            <Reveal delay={140}>
-              <p className="mt-6 max-w-xl text-base leading-relaxed text-muted">
-                Sem revisão organizada, o conteúdo que custou horas de estudo evapora em poucas
-                semanas — e o concurseiro só descobre isso na hora da prova. O Passe Revisão
-                transforma cada questão resolvida em um novo ponto no seu cronograma de revisão,
-                calculado automaticamente pra chegar exatamente quando você começa a esquecer.
-              </p>
+        </div>
+      </section>
+
+      {/* CRONOGRAMA / LEDGER */}
+      <section className="border-b border-border bg-surface">
+        <div className="mx-auto max-w-6xl px-5 py-20 sm:py-28">
+          <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
+            <div>
+              <Reveal>
+                <Eyebrow>Como funciona</Eyebrow>
+              </Reveal>
+              <Reveal delay={60}>
+                <h2
+                  className={`${display.className} mt-4 max-w-md text-3xl font-semibold leading-tight text-foreground sm:text-4xl`}
+                >
+                  Cada questão resolvida abre uma nova linha na sua ficha.
+                </h2>
+              </Reveal>
+              <Reveal delay={140}>
+                <p className="mt-6 max-w-md text-base leading-relaxed text-muted">
+                  Você não precisa lembrar de revisar. A cada sessão registrada, o sistema já
+                  calcula a próxima data — 24 horas, depois 7 dias, depois 30, 45 e 60, num
+                  ciclo que se repete até a véspera da prova.
+                </p>
+              </Reveal>
+            </div>
+            <Reveal delay={100}>
+              <ReviewLedger />
             </Reveal>
           </div>
         </div>
       </section>
 
-      {/* FUNCIONALIDADES */}
-      <section className="bg-surface py-24 sm:py-32">
-        <div className="mx-auto max-w-6xl px-5">
+      {/* FUNCIONALIDADES — carimbos */}
+      <section className="border-b border-border bg-white">
+        <div className="mx-auto max-w-6xl px-5 py-20 sm:py-28">
           <Reveal>
-            <Eyebrow>O que você ganha</Eyebrow>
+            <Eyebrow>O que muda no seu estudo</Eyebrow>
           </Reveal>
           <Reveal delay={60}>
             <h2
-              className={`${display.className} mt-4 max-w-xl text-3xl font-semibold leading-tight tracking-[-0.02em] text-foreground sm:text-4xl`}
+              className={`${display.className} mt-4 max-w-lg text-3xl font-semibold leading-tight text-foreground sm:text-4xl`}
             >
-              Tudo que você precisa pra nunca mais perder o fio da revisão.
+              Um jeito mais simples de nunca perder o fio da revisão.
             </h2>
           </Reveal>
 
-          <div className="mt-14 grid gap-4 sm:grid-cols-6">
+          <div className="mt-16 flex flex-wrap gap-x-8 gap-y-12">
             {FEATURES.map((f, i) => (
-              <Reveal
-                key={f.n}
-                delay={i * 90}
-                className={f.big ? "sm:col-span-3 sm:row-span-2" : "sm:col-span-3"}
-              >
-                <div
-                  className={`flex h-full flex-col rounded-2xl border border-border bg-white p-7 shadow-sm ${
-                    f.big ? "min-h-[220px]" : "min-h-[160px]"
-                  }`}
-                >
-                  <span className={`${mono.className} text-xs text-muted`}>{f.n}</span>
-                  <h3 className="mt-4 text-lg font-semibold text-foreground">{f.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted">{f.body}</p>
-                  {f.big && (
-                    <div className="mt-auto flex items-center gap-2 pt-8">
-                      {["24H", "7D", "30D", "45D", "60D"].map((label, di) => (
-                        <span key={label} className="flex items-center gap-2">
-                          <span
-                            className={`h-2 w-2 rounded-full ${
-                              di === 0 ? "bg-accent" : "bg-border"
-                            }`}
-                          />
-                          {di < 4 && <span className="h-px w-5 bg-border" />}
-                        </span>
-                      ))}
-                      <span className={`${mono.className} ml-2 text-[11px] text-muted`}>
-                        próxima em 24h
-                      </span>
-                    </div>
-                  )}
+              <Reveal key={f.title} delay={i * 90} className={`w-full sm:w-[calc(50%-1rem)] ${f.rotate}`}>
+                <div className="relative rounded-sm border-2 border-primary/70 p-6 before:absolute before:inset-[5px] before:rounded-sm before:border before:border-primary/30">
+                  <h3
+                    className={`${mono.className} text-sm font-bold uppercase tracking-[0.08em] text-primary`}
+                  >
+                    {f.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-muted">{f.body}</p>
                 </div>
               </Reveal>
             ))}
@@ -219,78 +207,89 @@ export default function LandingPage() {
       </section>
 
       {/* PWA */}
-      <section className="mx-auto max-w-6xl px-5 py-24 sm:py-32">
-        <div className="grid gap-10 sm:grid-cols-12 sm:items-center">
-          <div className="sm:col-span-5">
-            <Reveal>
-              <Eyebrow>Instale como app</Eyebrow>
-            </Reveal>
-            <Reveal delay={60}>
-              <h2
-                className={`${display.className} mt-4 text-3xl font-semibold leading-tight tracking-[-0.02em] text-foreground sm:text-4xl`}
-              >
-                Sem loja de aplicativo. Sem espaço ocupado.
-              </h2>
-            </Reveal>
-            <Reveal delay={140}>
-              <p className="mt-5 max-w-md text-base leading-relaxed text-muted">
-                O Passe Revisão é um PWA: adicione à tela inicial pelo navegador e ele abre como
-                um app de verdade, direto na sua fila de revisão do dia.
-              </p>
-            </Reveal>
-          </div>
+      <section className="bg-primary-dark">
+        <div className="mx-auto max-w-6xl px-5 py-20 sm:py-28">
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-10">
+            <div className="lg:col-span-5">
+              <Reveal>
+                <span className={`${mono.className} text-xs font-bold uppercase tracking-[0.16em] text-accent`}>
+                  Instalação
+                </span>
+              </Reveal>
+              <Reveal delay={60}>
+                <h2
+                  className={`${display.className} mt-4 text-3xl font-semibold leading-tight text-white sm:text-4xl`}
+                >
+                  Sem loja de aplicativo. Sem espaço ocupado.
+                </h2>
+              </Reveal>
+              <Reveal delay={140}>
+                <p className="mt-5 max-w-sm text-base leading-relaxed text-white/65">
+                  O Passe Revisão é um PWA: adicione à tela inicial pelo navegador e ele abre
+                  como um app de verdade, direto na sua fila de revisão do dia.
+                </p>
+              </Reveal>
+            </div>
 
-          <div className="sm:col-span-7">
-            <div className="grid gap-3 sm:grid-cols-3">
-              {[
-                { n: "01", label: "Abra no navegador", detail: "passe-revisao.app no celular" },
-                { n: "02", label: "Adicionar à tela inicial", detail: "menu do navegador → instalar" },
-                { n: "03", label: "Estude como app", detail: "ícone próprio, sem abas, sem distração" },
-              ].map((step, i) => (
-                <Reveal key={step.n} delay={i * 100}>
-                  <div className="h-full rounded-2xl border border-border bg-primary-dark p-6">
-                    <span className={`${mono.className} text-xs text-accent`}>{step.n}</span>
-                    <p className="mt-3 text-sm font-semibold text-white">{step.label}</p>
-                    <p className="mt-1.5 text-xs leading-relaxed text-white/60">{step.detail}</p>
-                  </div>
-                </Reveal>
-              ))}
+            <div className="lg:col-span-7">
+              <div className="grid gap-3 sm:grid-cols-3">
+                {PWA_STEPS.map((step, i) => (
+                  <Reveal key={step.n} delay={i * 100}>
+                    <div className="h-full rounded-sm border border-white/15 p-6">
+                      <span className={`${mono.className} text-xs text-accent`}>{step.n}</span>
+                      <p className="mt-3 text-sm font-semibold text-white">{step.label}</p>
+                      <p className="mt-1.5 text-xs leading-relaxed text-white/55">{step.detail}</p>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA FINAL */}
-      <section className="bg-primary-dark py-24 sm:py-32">
-        <div className="mx-auto max-w-6xl px-5 text-center">
-          <Reveal>
-            <h2
-              className={`${display.className} mx-auto max-w-2xl text-3xl font-semibold leading-tight tracking-[-0.02em] text-white sm:text-5xl`}
-            >
-              Sua próxima revisão já podia estar agendada.
-            </h2>
-          </Reveal>
-          <Reveal delay={100}>
-            <div className="mt-9">
-              <Link
-                href="/cadastro"
-                className="inline-block rounded-md bg-accent px-7 py-3.5 text-sm font-semibold text-primary-dark transition-colors hover:bg-accent-light"
-              >
-                Criar conta grátis
-              </Link>
+      {/* CTA FINAL — carimbo de aprovação */}
+      <section className="border-b border-border bg-white">
+        <div className="mx-auto max-w-6xl px-5 py-20 sm:py-28">
+          <div className="grid items-center gap-10 lg:grid-cols-[1fr_auto] lg:gap-16">
+            <div>
+              <Reveal>
+                <h2
+                  className={`${display.className} max-w-lg text-3xl font-bold leading-tight text-foreground sm:text-5xl`}
+                >
+                  Sua aprovação começa na revisão de hoje.
+                </h2>
+              </Reveal>
+              <Reveal delay={100}>
+                <div className="mt-8">
+                  <Link
+                    href="/cadastro"
+                    className="inline-block rounded-sm bg-accent px-7 py-3.5 text-sm font-semibold text-primary-dark transition-colors hover:bg-accent-dark"
+                  >
+                    Criar conta grátis
+                  </Link>
+                </div>
+              </Reveal>
             </div>
-          </Reveal>
+            <Reveal delay={160} className="flex justify-center">
+              <ApprovedStamp className="h-40 w-40 rotate-[-6deg] sm:h-48 sm:w-48" />
+            </Reveal>
+          </div>
         </div>
       </section>
 
-      <footer className="border-t border-border bg-white py-8">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-5 text-xs text-muted sm:flex-row">
-          <span className={`${display.className} font-semibold text-foreground`}>Passe Revisão</span>
+      {/* FOOTER — rodapé de documento */}
+      <footer className="bg-primary-dark py-8">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-5 text-xs text-white/50 sm:flex-row">
+          <span className={`${display.className} font-semibold text-white`}>Passe Revisão</span>
+          <span className={`${mono.className} text-[11px]`}>
+            método de revisão ativa para concursos públicos
+          </span>
           <div className="flex items-center gap-4">
-            <Link href="/login" className="hover:text-primary">
+            <Link href="/login" className="hover:text-white">
               Entrar
             </Link>
-            <span>© {new Date().getFullYear()} Passe Revisão</span>
+            <span>© {new Date().getFullYear()}</span>
           </div>
         </div>
       </footer>

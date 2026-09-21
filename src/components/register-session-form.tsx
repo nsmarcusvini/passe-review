@@ -81,20 +81,24 @@ export default function RegisterSessionForm({
     <form onSubmit={handleSubmit} className="space-y-4">
       {fixedTopic && fixedTopicLabel && (
         <div>
-          <p className="mb-1 text-sm font-medium text-foreground">Tópico</p>
-          <p className="rounded-md bg-surface px-3 py-2 text-sm text-foreground">
+          <p className="mb-1.5 font-mono-label text-[11px] uppercase tracking-[0.14em] text-muted">
+            Tópico
+          </p>
+          <p className="rounded-sm bg-surface px-3 py-2 text-sm text-foreground">
             {fixedTopicLabel.subjectName} — {fixedTopicLabel.name}
           </p>
         </div>
       )}
       {!fixedTopic && (
         <div>
-          <label className="mb-1 block text-sm font-medium text-foreground">Tópico</label>
+          <label className="mb-1.5 block font-mono-label text-[11px] uppercase tracking-[0.14em] text-muted">
+            Tópico
+          </label>
           <select
             value={topicId}
             onChange={(e) => setTopicId(e.target.value)}
             required
-            className="w-full rounded-md border border-border px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+            className="w-full rounded-sm border border-border px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary/30"
           >
             <option value="" disabled>
               Selecione…
@@ -110,7 +114,7 @@ export default function RegisterSessionForm({
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="mb-1 block text-sm font-medium text-foreground">
+          <label className="mb-1.5 block font-mono-label text-[11px] uppercase tracking-[0.14em] text-muted">
             Total de questões
           </label>
           <input
@@ -120,11 +124,13 @@ export default function RegisterSessionForm({
             value={total}
             onChange={(e) => setTotal(e.target.value)}
             required
-            className="w-full rounded-md border border-border px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+            className="w-full rounded-sm border border-border px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary/30"
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-foreground">Acertos</label>
+          <label className="mb-1.5 block font-mono-label text-[11px] uppercase tracking-[0.14em] text-muted">
+            Acertos
+          </label>
           <input
             type="number"
             min={0}
@@ -132,26 +138,29 @@ export default function RegisterSessionForm({
             value={correct}
             onChange={(e) => setCorrect(e.target.value)}
             required
-            className="w-full rounded-md border border-border px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+            className="w-full rounded-sm border border-border px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary/30"
           />
         </div>
       </div>
 
       {totalNum > 0 && (
-        <p className="text-xs text-muted">
+        <p className="font-mono-label text-[11px] tracking-wide text-muted">
           {correctNum} acertos · {incorrectNum} erros ·{" "}
-          {Math.round((correctNum / totalNum) * 100)}% de aproveitamento
+          <span className="text-primary">{Math.round((correctNum / totalNum) * 100)}%</span> de
+          aproveitamento
         </p>
       )}
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-foreground">Observações</label>
+        <label className="mb-1.5 block font-mono-label text-[11px] uppercase tracking-[0.14em] text-muted">
+          Observações
+        </label>
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={2}
           placeholder="Ex: errei questões de prazo processual, revisar súmulas"
-          className="w-full rounded-md border border-border px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+          className="w-full rounded-sm border border-border px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary/30"
         />
       </div>
 
@@ -160,18 +169,24 @@ export default function RegisterSessionForm({
           type="checkbox"
           checked={needsRevisit}
           onChange={(e) => setNeedsRevisit(e.target.checked)}
-          className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
+          className="h-4 w-4 rounded-sm border-border text-primary focus:ring-primary/30"
         />
         Marcar para voltar depois
       </label>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      {success && <p className="text-sm text-green-700">Registrado! Próxima revisão agendada.</p>}
+      {error && (
+        <p className="rounded-sm bg-danger-bg px-3 py-2 text-sm text-danger">{error}</p>
+      )}
+      {success && (
+        <p className="rounded-sm bg-success-bg px-3 py-2 text-sm text-success">
+          Registrado! Próxima revisão agendada.
+        </p>
+      )}
 
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:opacity-50"
+        className="w-full rounded-sm bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:opacity-50"
       >
         {pending ? "Salvando…" : "Registrar"}
       </button>

@@ -112,6 +112,104 @@ export async function getDashboardStats(supabase: SupabaseClient, userId: string
   };
 }
 
+export type DateRange = { from: string; to: string };
+
+export async function getDashboardAnalytics(supabase: SupabaseClient, userId: string, range: DateRange) {
+  const { data, error } = await supabase
+    .from("question_sessions")
+    .select("total_questions, correct, incorrect, session_date, topic_id, topics(name, subjects(name))")
+    .eq("user_id", userId)
+    .gte("session_date", range.from)
+    .lte("session_date", range.to)
+    .order("session_date", { ascending: true });
+
+  if (error) throw new Error(error.message);
+
+  const rows = data ?? [];
+  const totalQuestions = rows.reduce((sum, r) => sum + r.total_questions, 0);
+  const totalCorrect = rows.reduce((sum, r) => sum + r.correct, 0);
+  const totalIncorrect = rows.reduce((sum, r) => sum + r.incorrect, 0);
+  const accuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+
+  const fromDate = new Date(`${range.from}T00:00:00Z`);
+  const toDate = new Date(`${range.to}T00:00:00Z`);
+  const spanDays = Math.max(1, Math.round((toDate.getTime() - fromDate.getTime()) / 86_400_000) + 1);
+  const bucketMode: "day" | "week" = spanDays > 42 ? "week" : "day";
+
+  function bucketKeyFor(dateStr: string) {
+    if (bucketMode === "day") return dateStr;
+    const [y, m, d] = dateStr.split("-").map(Number);
+    const dt = new Date(Date.UTC(y, m - 1, d));
+    const isoDow = (dt.getUTCDay() + 6) % 7; // 0 = segunda-feira
+    dt.setUTCDate(dt.getUTCDate() - isoDow);
+    return toDateOnlyString(dt);
+  }
+
+  const byBucket = new Map<string, { correct: number; incorrect: number }>();
+  for (const r of rows) {
+    const key = bucketKeyFor(r.session_date);
+    const entry = byBucket.get(key) ?? { correct: 0, incorrect: 0 };
+    entry.correct += r.correct;
+    entry.incorrect += r.incorrect;
+    byBucket.set(key, entry);
+  }
+  const overTime = Array.from(byBucket.entries())
+    .sort(([a], [b]) => (a < b ? -1 : 1))
+    .map(([date, v]) => ({ date, ...v }));
+
+  const bySubject = new Map<string, { correct: number; incorrect: number; total: number }>();
+  const byTopic = new Map<
+    string,
+    { topicId: string; topicName: string; subjectName: string; correct: number; incorrect: number; total: number }
+  >();
+
+  for (const r of rows) {
+    const topic = r.topics as unknown as { name: string; subjects: { name: string } | null } | null;
+    const subjectName = topic?.subjects?.name ?? "Sem matéria";
+
+    const sEntry = bySubject.get(subjectName) ?? { correct: 0, incorrect: 0, total: 0 };
+    sEntry.correct += r.correct;
+    sEntry.incorrect += r.incorrect;
+    sEntry.total += r.total_questions;
+    bySubject.set(subjectName, sEntry);
+
+    const tEntry = byTopic.get(r.topic_id) ?? {
+      topicId: r.topic_id,
+      topicName: topic?.name ?? "Tópico removido",
+      subjectName,
+      correct: 0,
+      incorrect: 0,
+      total: 0,
+    };
+    tEntry.correct += r.correct;
+    tEntry.incorrect += r.incorrect;
+    tEntry.total += r.total_questions;
+    byTopic.set(r.topic_id, tEntry);
+  }
+
+  const subjectDistribution = Array.from(bySubject.entries())
+    .map(([name, v]) => ({ name, total: v.total }))
+    .sort((a, b) => b.total - a.total);
+
+  const topicPerformance = Array.from(byTopic.values())
+    .map((t) => ({ ...t, accuracy: t.total > 0 ? Math.round((t.correct / t.total) * 100) : 0 }))
+    .sort((a, b) => a.accuracy - b.accuracy || b.total - a.total);
+
+  const weakTopics = topicPerformance.filter((t) => t.total >= 3 && t.accuracy < 70).slice(0, 6);
+
+  return {
+    totalQuestions,
+    totalCorrect,
+    totalIncorrect,
+    accuracy,
+    bucketMode,
+    overTime,
+    subjectDistribution,
+    topicPerformance,
+    weakTopics,
+  };
+}
+
 export async function getSubjectsWithTopicCount(supabase: SupabaseClient, userId: string) {
   const { data, error } = await supabase
     .from("subjects")
