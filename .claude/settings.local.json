@@ -1,0 +1,9 @@
+{
+  "disabledMcpjsonServers": [
+    "vercel",
+    "abacatepay"
+  ],
+  "enabledMcpjsonServers": [
+    "supabase"
+  ]
+}
